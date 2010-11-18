@@ -1,0 +1,17 @@
+
+Lucene Classification Library
+by Marek Schmidt <fregaham@gmail.com>
+
+A library to use machine learning algorithms when the training set is small
+and the unlabelled document set is huge, e.g. to classify categories in
+Wikipedia.
+
+The main idea is to not go through all the documents in the collection,
+but instead, go through best-n term-vectors, selected by feature selection, thus
+exploring only a subset of the whole dataset.
+
+Version 0.1
+
+* Implemented pretty basic Naive Bayes classifier
+
+
