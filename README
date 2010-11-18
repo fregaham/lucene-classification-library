@@ -10,6 +10,9 @@ The main idea is to not go through all the documents in the collection,
 but instead, go through best-n term-vectors, selected by feature selection, thus
 exploring only a subset of the whole dataset.
 
+Requirements
+    lucene-core-2.9.1.jar  Apache Lucene library (other versions should probably also work)
+
 Version 0.1
 
 * Implemented pretty basic Naive Bayes classifier
