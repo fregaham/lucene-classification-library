@@ -72,8 +72,20 @@ import org.apache.lucene.store.FSDirectory;
 public class LuceneClassification {
 
     public static class Iteration {
-        Map<Integer, Double> id2logscore;
-        int iteration;
+        private Map<Integer, Double> id2logscore;
+        private int iteration;
+
+        public int getIteration() {
+            return iteration;
+        }
+
+        public double getLogScore(int id) {
+            return id2logscore.get(id);
+        }
+
+        public Map<Integer, Double> getId2LogScore() {
+            return id2logscore;
+        }
     }
 
     private IndexReader reader;

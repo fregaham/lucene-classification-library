@@ -32,7 +32,7 @@
 
 package cz.vutbr.fit.nlp.lc.tools;
 
-import cz.vutbt.fit.nlp.lc.*;
+import cz.vutbr.fit.nlp.lc.*;
 
 import java.io.Serializable;
 import java.io.IOException;
@@ -159,11 +159,11 @@ class Search {
         while(classification.hasNext(iter)) {
             iter = classification.step(iter);
 
-            System.err.println("Iteration: " + iter.iteration + ", feature: " + classification.getFeatures().get(iter.iteration) + " ll: " + nbc.loglikelihoods.get(0).get(classification.getFeatures().get(iter.iteration)));
+            System.err.println("Iteration: " + iter.getIteration() + ", feature: " + classification.getFeatures().get(iter.getIteration()) + " ll: " + nbc.loglikelihoods.get(0).get(classification.getFeatures().get(iter.getIteration())));
 
             // We fix the number of features to 50, which has quite acceptable
             // results in both speed and classification performance.
-            if (iter.iteration >= 50) break;
+            if (iter.getIteration() >= 50) break;
         }
 
 
@@ -173,7 +173,7 @@ class Search {
             }
         });
 
-        for (Map.Entry<Integer, Double> entry : iter.id2logscore.entrySet()) {
+        for (Map.Entry<Integer, Double> entry : iter.getId2LogScore().entrySet()) {
 
             if (class2ids.get(0).contains(entry.getKey()) || class2ids.get(1).contains(entry.getKey())) {
                 continue;

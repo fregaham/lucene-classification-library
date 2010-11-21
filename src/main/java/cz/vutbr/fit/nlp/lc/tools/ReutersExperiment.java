@@ -32,7 +32,7 @@
 
 package cz.vutbr.fit.nlp.lc.tools;
 
-import cz.vutbt.fit.nlp.lc.*;
+import cz.vutbr.fit.nlp.lc.*;
 
 import java.io.Serializable;
 import java.io.IOException;
@@ -124,7 +124,7 @@ class ReutersExperiment {
         LuceneClassification.Iteration iter = classification.steps(null, 50);
 
         // System.out.println("Iteration: " + iter.iteration);
-        for (Map.Entry<Integer, Double> entry : iter.id2logscore.entrySet()) {
+        for (Map.Entry<Integer, Double> entry : iter.getId2LogScore().entrySet()) {
 
             Document doc = reader.document(entry.getKey());
             Field field = doc.getField("id");
