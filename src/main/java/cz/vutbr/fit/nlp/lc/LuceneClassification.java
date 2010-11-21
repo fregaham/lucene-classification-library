@@ -160,7 +160,7 @@ public class LuceneClassification {
         
         Iteration next = new Iteration();
         if (prev == null) {
-            next.iteration = 1;
+            next.iteration = 0;
         }
         else {
             next.iteration = prev.iteration + 1;
@@ -313,19 +313,23 @@ public class LuceneClassification {
 
                 double posValue = pose.getValue();
                 double negValue;
+                double Nc = class2ids.get(klass).size();
+
                 if (neg.get(klass).containsKey(pose.getKey())) {
                     negValue = neg.get(klass).get(pose.getKey());
                 }
                 else {
                     // add one smooth
                     negValue = 1.0;
+                    total += 1;
+                    Nc += 1;
                 }
 
                 // The following code is garbage, because that's where I play with different feature selection schemes
                 // The methods you can find here: Information gain, mutual information, likelihood ratio, and some variants...
  
                 //double loglikelihood = Math.log(posValue) - Math.log(negValue);//Math.log(posValue + negValue);
-                double loglikelihood = Math.log(posValue) - Math.log(class2ids.get(klass).size()) - Math.log(negValue) + Math.log(0.0 + total - class2ids.get(klass).size());
+                double loglikelihood = Math.log(posValue) - Math.log(Nc) - Math.log(negValue) + Math.log(0.0 + total - Nc);
                                 
 /*                double miA = posValue;
                 double miB = negValue;
@@ -335,19 +339,19 @@ public class LuceneClassification {
 
 //                double featurescore = posValue + negValue;
 
-                double Pc = (0.0 + class2ids.get(klass).size()) / (0.0 + total);
+                double Pc = (0.0 + Nc) / (0.0 + total);
                 double Pnc = 1.0 - Pc;
                 double Pt = (0.0 + posValue + negValue) / (0.0 + total);
                 double Pnt = 1.0 - Pt;
                 double Pc_t = (0.0 + posValue) / (0.0 + posValue + negValue);
-                double Pc_nt = (0.0 + class2ids.get(klass).size() - posValue) / (0.0 + total - (posValue + negValue));
+                double Pc_nt = (0.0 + Nc - posValue) / (0.0 + total - (posValue + negValue));
                 double Pnc_t = (0.0 + negValue) / (0.0 + posValue + negValue);
-                double Pnc_nt = (0.0 + total - (class2ids.get(klass).size() + negValue)) / (0.0 + total - (posValue + negValue));
+                double Pnc_nt = (0.0 + total - (Nc + negValue)) / (0.0 + total - (posValue + negValue));
 
                 double Ptc = (0.0 + posValue) / (0.0 + total);
                 double Ptnc = (0.0 + negValue) / (0.0 + total);
-                double Pntc = (0.0 + class2ids.get(klass).size() - posValue) / (0.0 + total);
-                double Pntnc = (0.0 + total - (class2ids.get(klass).size() + negValue)) / (0.0 + total);
+                double Pntc = (0.0 + Nc - posValue) / (0.0 + total);
+                double Pntnc = (0.0 + total - (Nc + negValue)) / (0.0 + total);
 
                 double ig = - Pc * Math.log(Pc) - Pnc * Math.log(Pnc) + Pt * (Pc_t * Math.log(Pc_t) + Pnc_t * Math.log(Pnc_t)) + Pnt * (Pc_nt * Math.log(Pc_nt) + Pnc_nt * Math.log(Pnc_nt));
                 double score = ig;
@@ -378,7 +382,7 @@ public class LuceneClassification {
                 //double mi = Ptc * (Math.log(Ptc) - (Math.log(Pc) + Math.log(Pt))) + Ptnc * (Math.log(Ptnc) - (Math.log(Pnc) + Math.log(Pt)));
 
 
-                double T = total;
+                /*double T = total;
                 double Nc = class2ids.get(klass).size();
                 double Nnc = T - Nc;
 
@@ -388,7 +392,7 @@ public class LuceneClassification {
                 double Ntc = posValue;
                 double Ntnc = negValue;
                 double Nntc = Nc - Ntc;
-                double Nntnc = Nnc - Ntnc;
+                double Nntnc = Nnc - Ntnc;*/
 
                 // MI3 (should be the "true" mutual information)
                 /*double score = (Math.log(T) - (F(Nc, T) + F(Nnc, T)))  // H(Y)
@@ -402,20 +406,22 @@ public class LuceneClassification {
                 //double score = loglikelihood;
 
                 // LR1 / 2 / 3   (variants for likelihood ratio)
-                double n = posValue;
+                //double n = posValue;
                 //double n_ = negVaue;
                 //double n_ = 0.0 + reader.docFreq(new Term(featureField, term));
-                double n_ = posValue + negValue;
+                //double n_ = posValue + negValue;
 
-                double N = class2ids.get(klass).size();
+                //double N = class2ids.get(klass).size();
                 //double N_ = total - class2ids.get(klass).size();
                 //double N_ = reader.numDocs();
-                double N_ = total;
+                //double N_ = total;
                 //double score = l(n_, N_, n + n_, N + N_) + l(n, N, n + n_, N + N_) - l(n, N, n, N) - l(n_, N_, n_, N_);
 
                 fscores.put(pose.getKey(), score);
 
                 klassloglikelihoods.put(pose.getKey(), loglikelihood);
+
+                // System.err.println( "klass:" + klass + ", " + term + " likelihood: " + loglikelihood + ", ig: " + score );
             }
             
             ret.loglikelihoods.put(klass, klassloglikelihoods);
@@ -432,6 +438,7 @@ public class LuceneClassification {
             
             List<String> features = new LinkedList<String> ();
             for (Map.Entry<String, Double> entry : list) {
+                System.err.println( "adding klass:" + klass + ": " + entry.getKey());
                 features.add(entry.getKey());
             }
             
